@@ -1,20 +1,14 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements. See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership. The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License. You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements. See the NOTICE file distributed
+ * with this work for additional information regarding copyright ownership. The ASF licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License
+ * at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS"
+ * BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 package com.github.exabrial.cdi.microspike;
@@ -29,8 +23,8 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * A store of annotations to be used {@link AnnotatedTypeBuilder} and other places
- * where a collection of annotations needs manipulation.
+ * A store of annotations to be used {@link AnnotatedTypeBuilder} and other places where a collection of annotations needs
+ * manipulation.
  */
 // this class is intentionally made package scope
 class AnnotationBuilder {
@@ -48,7 +42,8 @@ class AnnotationBuilder {
 	/**
 	 * Adds the annotation to the collections.
 	 *
-	 * @param annotation annotation to be added
+	 * @param annotation
+	 *          annotation to be added
 	 * @return this
 	 */
 	public AnnotationBuilder add(Annotation annotation) {
@@ -63,7 +58,8 @@ class AnnotationBuilder {
 	/**
 	 * Removes the given annotation from the collections.
 	 *
-	 * @param annotationType to be removed
+	 * @param annotationType
+	 *          to be removed
 	 * @return this
 	 */
 	public AnnotationBuilder remove(Class<? extends Annotation> annotationType) {
@@ -94,7 +90,8 @@ class AnnotationBuilder {
 	/**
 	 * Adds all annotations from the given collection.
 	 *
-	 * @param annotations collection of annotations to be added
+	 * @param annotations
+	 *          collection of annotations to be added
 	 * @return this
 	 */
 	public AnnotationBuilder addAll(Collection<Annotation> annotations) {
@@ -107,7 +104,8 @@ class AnnotationBuilder {
 	/**
 	 * Adds all annotations from an {@link AnnotationStore}.
 	 *
-	 * @param annotations annotations to be added
+	 * @param annotations
+	 *          annotations to be added
 	 * @return this
 	 */
 	public AnnotationBuilder addAll(AnnotationStore annotations) {
@@ -120,7 +118,8 @@ class AnnotationBuilder {
 	/**
 	 * Adds all annotations from the given {@link AnnotatedElement}.
 	 *
-	 * @param element element containing annotations to be added
+	 * @param element
+	 *          element containing annotations to be added
 	 * @return this
 	 */
 	public AnnotationBuilder addAll(AnnotatedElement element) {

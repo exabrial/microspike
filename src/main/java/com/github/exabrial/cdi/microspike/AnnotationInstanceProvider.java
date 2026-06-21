@@ -1,20 +1,14 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements. See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership. The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License. You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements. See the NOTICE file distributed
+ * with this work for additional information regarding copyright ownership. The ASF licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License
+ * at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS"
+ * BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 package com.github.exabrial.cdi.microspike;
@@ -30,13 +24,20 @@ import java.util.Collections;
 import java.util.Map;
 
 /**
- * <p>A small helper class to create an Annotation instance of the given annotation class
- * via {@link java.lang.reflect.Proxy}. The annotation literal gets filled with the default values.</p>
+ * <p>
+ * A small helper class to create an Annotation instance of the given annotation class via {@link java.lang.reflect.Proxy}. The
+ * annotation literal gets filled with the default values.
+ * </p>
  * <p/>
- * <p>This class can be used to dynamically create Annotations which can be usd in AnnotatedTyp.
- * This is e.g. the case if you configure an annotation via properties or XML file. In those cases you
- * cannot use {@link javax.enterprise.util.AnnotationLiteral} because the type is not known at compile time.</p>
- * <p>usage:</p>
+ * <p>
+ * This class can be used to dynamically create Annotations which can be usd in AnnotatedTyp. This is e.g. the case if you configure an
+ * annotation via properties or XML file. In those cases you cannot use {@link javax.enterprise.util.AnnotationLiteral} because the
+ * type is not known at compile time.
+ * </p>
+ * <p>
+ * usage:
+ * </p>
+ * 
  * <pre>
  * String annotationClassName = ...;
  * Class<? extends annotation> annotationClass =
@@ -53,10 +54,10 @@ public class AnnotationInstanceProvider implements Annotation, InvocationHandler
 	private final Map<String, ?> memberValues;
 
 	/**
-	 * Required to use the result of the factory instead of a default implementation
-	 * of {@link javax.enterprise.util.AnnotationLiteral}.
+	 * Required to use the result of the factory instead of a default implementation of {@link javax.enterprise.util.AnnotationLiteral}.
 	 *
-	 * @param annotationClass class of the target annotation
+	 * @param annotationClass
+	 *          class of the target annotation
 	 */
 	private AnnotationInstanceProvider(Class<? extends Annotation> annotationClass, Map<String, ?> memberValues) {
 		this.annotationClass = annotationClass;
@@ -66,9 +67,12 @@ public class AnnotationInstanceProvider implements Annotation, InvocationHandler
 	/**
 	 * Creates an annotation instance for the given annotation class.
 	 *
-	 * @param annotationClass type of the target annotation
-	 * @param values          A non-null map of the member values, keys being the name of the members
-	 * @param <T>             current type
+	 * @param annotationClass
+	 *          type of the target annotation
+	 * @param values
+	 *          A non-null map of the member values, keys being the name of the members
+	 * @param <T>
+	 *          current type
 	 * @return annotation instance for the given type
 	 */
 	@SuppressWarnings("unchecked")
@@ -83,8 +87,10 @@ public class AnnotationInstanceProvider implements Annotation, InvocationHandler
 	/**
 	 * Creates an annotation instance for the given annotation class.
 	 *
-	 * @param annotationClass type of the target annotation
-	 * @param <T>             current type
+	 * @param annotationClass
+	 *          type of the target annotation
+	 * @param <T>
+	 *          current type
 	 * @return annotation instance for the given type
 	 */
 	@SuppressWarnings("unchecked")
@@ -93,16 +99,17 @@ public class AnnotationInstanceProvider implements Annotation, InvocationHandler
 	}
 
 	private static synchronized <T extends Annotation> Annotation initAnnotation(Class<T> annotationClass, Map<String, ?> values) {
-		return (Annotation) Proxy.newProxyInstance(annotationClass.getClassLoader(),
-				new Class[]{annotationClass},
+		return (Annotation) Proxy.newProxyInstance(annotationClass.getClassLoader(), new Class[] { annotationClass },
 				new AnnotationInstanceProvider(annotationClass, values));
 	}
 
 	/**
 	 * Helper method for generating a hash code for an array.
 	 *
-	 * @param componentType the component type of the array
-	 * @param o             the array
+	 * @param componentType
+	 *          the component type of the array
+	 * @param o
+	 *          the array
 	 * @return a hash code for the specified array
 	 */
 	private static int arrayMemberHash(Class<?> componentType, Object o) {
@@ -168,8 +175,7 @@ public class AnnotationInstanceProvider implements Annotation, InvocationHandler
 	}
 
 	/**
-	 * Copied from Apache OWB (javax.enterprise.util.AnnotationLiteral#toString())
-	 * with minor changes.
+	 * Copied from Apache OWB (javax.enterprise.util.AnnotationLiteral#toString()) with minor changes.
 	 *
 	 * @return the current state of the annotation as string
 	 */
@@ -212,8 +218,7 @@ public class AnnotationInstanceProvider implements Annotation, InvocationHandler
 			if (annotationClass.isInstance(o)) {
 				for (Map.Entry<String, ?> entry : memberValues.entrySet()) {
 					try {
-						Object oValue = annotationClass.getMethod(entry.getKey(), EMPTY_CLASS_ARRAY)
-								.invoke(o, EMPTY_OBJECT_ARRAY);
+						Object oValue = annotationClass.getMethod(entry.getKey(), EMPTY_CLASS_ARRAY).invoke(o, EMPTY_OBJECT_ARRAY);
 						if (oValue != null && entry.getValue() != null) {
 							if (!oValue.equals(entry.getValue())) {
 								return false;
@@ -244,7 +249,7 @@ public class AnnotationInstanceProvider implements Annotation, InvocationHandler
 		return memberValues.equals(that.memberValues);
 	}
 
-	//besides modularity, this has the advantage of autoboxing primitives:
+	// besides modularity, this has the advantage of autoboxing primitives:
 
 	@Override
 	public int hashCode() {
@@ -267,16 +272,17 @@ public class AnnotationInstanceProvider implements Annotation, InvocationHandler
 	}
 
 	/**
-	 * <p>Generate a hash code for the given annotation using the algorithm
-	 * presented in the {@link Annotation#hashCode()} API docs.</p>
+	 * <p>
+	 * Generate a hash code for the given annotation using the algorithm presented in the {@link Annotation#hashCode()} API docs.
+	 * </p>
 	 *
-	 * @param a the Annotation for a hash code calculation is desired, not
-	 *          {@code null}
+	 * @param a
+	 *          the Annotation for a hash code calculation is desired, not {@code null}
 	 * @return the calculated hash code
-	 * @throws RuntimeException      if an {@code Exception} is encountered during
-	 *                               annotation member access
-	 * @throws IllegalStateException if an annotation method invocation returns
-	 *                               {@code null}
+	 * @throws RuntimeException
+	 *           if an {@code Exception} is encountered during annotation member access
+	 * @throws IllegalStateException
+	 *           if an annotation method invocation returns {@code null}
 	 */
 	private int hashCode(Annotation a) {
 		int result = 0;
@@ -300,8 +306,10 @@ public class AnnotationInstanceProvider implements Annotation, InvocationHandler
 	/**
 	 * Helper method for generating a hash code for a member of an annotation.
 	 *
-	 * @param name  the name of the member
-	 * @param value the value of the member
+	 * @param name
+	 *          the name of the member
+	 * @param value
+	 *          the value of the member
 	 * @return a hash code for this member
 	 */
 	private int hashMember(String name, Object value) {

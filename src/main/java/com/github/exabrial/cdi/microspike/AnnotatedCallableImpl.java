@@ -1,20 +1,14 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements. See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership. The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License. You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements. See the NOTICE file distributed
+ * with this work for additional information regarding copyright ownership. The ASF licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License
+ * at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS"
+ * BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 package com.github.exabrial.cdi.microspike;
@@ -33,23 +27,19 @@ import jakarta.enterprise.inject.spi.AnnotatedType;
 /**
  * Implementation of {@link AnnotatedCallable}.
  */
-abstract class AnnotatedCallableImpl<X, Y extends Member> extends AnnotatedMemberImpl<X, Y>
-		implements AnnotatedCallable<X> {
+abstract class AnnotatedCallableImpl<X, Y extends Member> extends AnnotatedMemberImpl<X, Y> implements AnnotatedCallable<X> {
 
 	private final List<AnnotatedParameter<X>> parameters;
 
-	protected AnnotatedCallableImpl(AnnotatedType<X> declaringType, Y member, Class<?> memberType,
-									Class<?>[] parameterTypes, Type[] genericTypes, AnnotationStore annotations,
-									Map<Integer, AnnotationStore> parameterAnnotations, Type genericType,
-									Map<Integer, Type> parameterTypeOverrides) {
+	protected AnnotatedCallableImpl(AnnotatedType<X> declaringType, Y member, Class<?> memberType, Class<?>[] parameterTypes,
+			Type[] genericTypes, AnnotationStore annotations, Map<Integer, AnnotationStore> parameterAnnotations, Type genericType,
+			Map<Integer, Type> parameterTypeOverrides) {
 		super(declaringType, member, memberType, annotations, genericType, null);
-		parameters = getAnnotatedParameters(this, parameterTypes, genericTypes, parameterAnnotations,
-				parameterTypeOverrides);
+		parameters = getAnnotatedParameters(this, parameterTypes, genericTypes, parameterAnnotations, parameterTypeOverrides);
 	}
 
-	private static <X, Y extends Member> List<AnnotatedParameter<X>> getAnnotatedParameters(
-			AnnotatedCallableImpl<X, Y> callable, Class<?>[] parameterTypes, Type[] genericTypes,
-			Map<Integer, AnnotationStore> parameterAnnotations,
+	private static <X, Y extends Member> List<AnnotatedParameter<X>> getAnnotatedParameters(AnnotatedCallableImpl<X, Y> callable,
+			Class<?>[] parameterTypes, Type[] genericTypes, Map<Integer, AnnotationStore> parameterAnnotations,
 			Map<Integer, Type> parameterTypeOverrides) {
 		List<AnnotatedParameter<X>> parameters = new ArrayList<AnnotatedParameter<X>>();
 		int len = parameterTypes.length;
@@ -63,8 +53,8 @@ abstract class AnnotatedCallableImpl<X, Y extends Member> extends AnnotatedMembe
 			if (parameterTypeOverrides != null) {
 				over = parameterTypeOverrides.get(i);
 			}
-			AnnotatedParameterImpl<X> p = new AnnotatedParameterImpl<X>(
-					callable, parameterTypes[i], i, builder.create(), genericTypes[i], over);
+			AnnotatedParameterImpl<X> p = new AnnotatedParameterImpl<X>(callable, parameterTypes[i], i, builder.create(), genericTypes[i],
+					over);
 
 			parameters.add(p);
 		}

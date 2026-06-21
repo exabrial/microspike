@@ -1,20 +1,14 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements. See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership. The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License. You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements. See the NOTICE file distributed
+ * with this work for additional information regarding copyright ownership. The ASF licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License
+ * at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS"
+ * BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 package com.github.exabrial.cdi.microspike;
@@ -41,8 +35,8 @@ import jakarta.enterprise.util.Nonbinding;
 /**
  * Utilities for common reflection based actions. Some are basic Java Reflection based, others are CDI based.
  */
-//X TODO: Look at merging this with some of the other classes from CODI, or if they're really needed
-//X TODO: Also some methods need JavaDoc
+// X TODO: Look at merging this with some of the other classes from CODI, or if they're really needed X TODO: Also some methods need
+// JavaDoc
 @Typed()
 public abstract class ReflectionUtils {
 	private static final Object[] EMPTY_OBJECT_ARRAY = new Object[0];
@@ -52,10 +46,10 @@ public abstract class ReflectionUtils {
 	}
 
 	/**
-	 * Get all the declared fields on the class hierarchy. This <b>will</b>
-	 * return overridden fields.
+	 * Get all the declared fields on the class hierarchy. This <b>will</b> return overridden fields.
 	 *
-	 * @param clazz The class to search
+	 * @param clazz
+	 *          The class to search
 	 * @return the set of all declared fields or an empty set if there are none
 	 */
 	public static Set<Field> getAllDeclaredFields(Class<?> clazz) {
@@ -67,12 +61,13 @@ public abstract class ReflectionUtils {
 	}
 
 	/**
-	 * Search the class hierarchy for a field with the given name. Will return
-	 * the nearest match, starting with the class specified and searching up the
-	 * hierarchy.
+	 * Search the class hierarchy for a field with the given name. Will return the nearest match, starting with the class specified and
+	 * searching up the hierarchy.
 	 *
-	 * @param clazz The class to search
-	 * @param name  The name of the field to search for
+	 * @param clazz
+	 *          The class to search
+	 * @param name
+	 *          The name of the field to search for
 	 * @return The field found, or null if no field is found
 	 */
 	public static Field tryToFindDeclaredField(Class<?> clazz, String name) {
@@ -88,10 +83,10 @@ public abstract class ReflectionUtils {
 	}
 
 	/**
-	 * Get all the declared methods on the class hierarchy. This <b>will</b>
-	 * return overridden methods.
+	 * Get all the declared methods on the class hierarchy. This <b>will</b> return overridden methods.
 	 *
-	 * @param clazz The class to search
+	 * @param clazz
+	 *          The class to search
 	 * @return the set of all declared methods or an empty set if there are none
 	 */
 	public static Set<Method> getAllDeclaredMethods(Class<?> clazz) {
@@ -103,8 +98,8 @@ public abstract class ReflectionUtils {
 	}
 
 	private static String buildInvokeMethodErrorMessage(Method method, Object obj, Object... args) {
-		StringBuilder message = new StringBuilder(String.format(
-				"Details: Exception invoking method [%s] on object [%s], using arguments [", method.getName(), obj));
+		StringBuilder message = new StringBuilder(
+				String.format("Details: Exception invoking method [%s] on object [%s], using arguments [", method.getName(), obj));
 		if (args != null) {
 			for (int i = 0; i < args.length; i++) {
 				message.append(i > 0 ? ", " : "").append(args[i]);
@@ -116,49 +111,47 @@ public abstract class ReflectionUtils {
 
 	/**
 	 * <p>
-	 * Invoke the method on the instance, with any arguments specified, casting
-	 * the result of invoking the method to the expected return type.
+	 * Invoke the method on the instance, with any arguments specified, casting the result of invoking the method to the expected return
+	 * type.
 	 * </p>
 	 * <p/>
 	 * <p>
-	 * This method wraps {@link Method#invoke(Object, Object...)}, converting the
-	 * checked exceptions that {@link Method#invoke(Object, Object...)} specifies
-	 * to runtime exceptions.
+	 * This method wraps {@link Method#invoke(Object, Object...)}, converting the checked exceptions that
+	 * {@link Method#invoke(Object, Object...)} specifies to runtime exceptions.
 	 * </p>
 	 * <p/>
 	 * <p>
-	 * If instructed, this method attempts to set the accessible flag of the method in a
-	 * {@link java.security.PrivilegedAction} before invoking the method.
+	 * If instructed, this method attempts to set the accessible flag of the method in a {@link java.security.PrivilegedAction} before
+	 * invoking the method.
 	 * </p>
 	 *
-	 * @param setAccessible flag indicating whether method should first be set as
-	 *                      accessible
-	 * @param method        the method to invoke
-	 * @param instance      the instance to invoke the method
-	 * @param args          the arguments to the method
-	 * @return the result of invoking the method, or null if the method's return
-	 * type is void
-	 * @throws RuntimeException            if this <code>Method</code> object enforces Java
-	 *                                     language access control and the underlying method is
-	 *                                     inaccessible or if the underlying method throws an exception or
-	 *                                     if the initialization provoked by this method fails.
-	 * @throws IllegalArgumentException    if the method is an instance method and
-	 *                                     the specified <code>instance</code> argument is not an instance
-	 *                                     of the class or interface declaring the underlying method (or
-	 *                                     of a subclass or implementor thereof); if the number of actual
-	 *                                     and formal parameters differ; if an unwrapping conversion for
-	 *                                     primitive arguments fails; or if, after possible unwrapping, a
-	 *                                     parameter value cannot be converted to the corresponding formal
-	 *                                     parameter type by a method invocation conversion.
-	 * @throws NullPointerException        if the specified <code>instance</code> is
-	 *                                     null and the method is an instance method.
-	 * @throws ClassCastException          if the result of invoking the method cannot be
-	 *                                     cast to the expectedReturnType
-	 * @throws ExceptionInInitializerError if the initialization provoked by this
-	 *                                     method fails.
+	 * @param setAccessible
+	 *          flag indicating whether method should first be set as accessible
+	 * @param method
+	 *          the method to invoke
+	 * @param instance
+	 *          the instance to invoke the method
+	 * @param args
+	 *          the arguments to the method
+	 * @return the result of invoking the method, or null if the method's return type is void
+	 * @throws RuntimeException
+	 *           if this <code>Method</code> object enforces Java language access control and the underlying method is inaccessible or if
+	 *           the underlying method throws an exception or if the initialization provoked by this method fails.
+	 * @throws IllegalArgumentException
+	 *           if the method is an instance method and the specified <code>instance</code> argument is not an instance of the class or
+	 *           interface declaring the underlying method (or of a subclass or implementor thereof); if the number of actual and formal
+	 *           parameters differ; if an unwrapping conversion for primitive arguments fails; or if, after possible unwrapping, a
+	 *           parameter value cannot be converted to the corresponding formal parameter type by a method invocation conversion.
+	 * @throws NullPointerException
+	 *           if the specified <code>instance</code> is null and the method is an instance method.
+	 * @throws ClassCastException
+	 *           if the result of invoking the method cannot be cast to the expectedReturnType
+	 * @throws ExceptionInInitializerError
+	 *           if the initialization provoked by this method fails.
 	 * @see Method#invoke(Object, Object...)
 	 */
-	public static <T> T invokeMethod(Object instance, Method method, Class<T> expectedReturnType, boolean setAccessible, Object... args) {
+	public static <T> T invokeMethod(Object instance, Method method, Class<T> expectedReturnType, boolean setAccessible,
+			Object... args) {
 		if (setAccessible && !method.isAccessible()) {
 			if (System.getSecurityManager() != null) {
 				AccessController.doPrivileged(new SetAccessiblePrivilegedAction(method));
@@ -170,14 +163,14 @@ public abstract class ReflectionUtils {
 		try {
 			return expectedReturnType.cast(method.invoke(instance, args));
 		} catch (InvocationTargetException e) {
-			//re-visit DELTASPIKE-299 before changing this part
+			// re-visit DELTASPIKE-299 before changing this part
 			ExceptionUtils.throwAsRuntimeException(e.getCause());
-			//won't happen
+			// won't happen
 			return null;
 		} catch (Exception e) {
 			String customMessage = createCustomMessage(e, method, instance, args);
 			ExceptionUtils.changeAndThrowException(e, customMessage);
-			//won't happen
+			// won't happen
 			return null;
 		}
 	}
@@ -189,8 +182,10 @@ public abstract class ReflectionUtils {
 	/**
 	 * Extract the raw type, given a type.
 	 *
-	 * @param <T>  the type
-	 * @param type the type to extract the raw type from
+	 * @param <T>
+	 *          the type
+	 * @param type
+	 *          the type to extract the raw type from
 	 * @return the raw type, or null if the raw type cannot be determined.
 	 */
 	@SuppressWarnings("unchecked")
@@ -206,7 +201,8 @@ public abstract class ReflectionUtils {
 	/**
 	 * Check if a class is serializable.
 	 *
-	 * @param clazz The class to check
+	 * @param clazz
+	 *          The class to check
 	 * @return true if the class implements serializable or is a primitive (needed for type {@link Void}
 	 */
 	public static boolean isSerializable(Class<?> clazz) {
@@ -216,7 +212,8 @@ public abstract class ReflectionUtils {
 	/**
 	 * Checks if class is final.
 	 *
-	 * @param clazz The class to check
+	 * @param clazz
+	 *          The class to check
 	 * @return True if final, false otherwise
 	 */
 	public static boolean isFinal(Class<?> clazz) {
@@ -226,7 +223,8 @@ public abstract class ReflectionUtils {
 	/**
 	 * Checks if member is final.
 	 *
-	 * @param member The member to check
+	 * @param member
+	 *          The member to check
 	 * @return True if final, false otherwise
 	 */
 	public static boolean isFinal(Member member) {
@@ -236,7 +234,8 @@ public abstract class ReflectionUtils {
 	/**
 	 * Checks if member is private.
 	 *
-	 * @param member The member to check
+	 * @param member
+	 *          The member to check
 	 * @return True if final, false otherwise
 	 */
 	public static boolean isPrivate(Member member) {
@@ -250,7 +249,8 @@ public abstract class ReflectionUtils {
 	/**
 	 * Checks if type is static.
 	 *
-	 * @param type Type to check
+	 * @param type
+	 *          Type to check
 	 * @return True if static, false otherwise
 	 */
 	public static boolean isStatic(Class<?> type) {
@@ -260,7 +260,8 @@ public abstract class ReflectionUtils {
 	/**
 	 * Checks if member is static.
 	 *
-	 * @param member Member to check
+	 * @param member
+	 *          Member to check
 	 * @return True if static, false otherwise
 	 */
 	public static boolean isStatic(Member member) {
@@ -281,7 +282,8 @@ public abstract class ReflectionUtils {
 	/**
 	 * Gets the actual type arguments of a class.
 	 *
-	 * @param clazz The class to examine
+	 * @param clazz
+	 *          The class to examine
 	 * @return The type arguments
 	 */
 	public static Type[] getActualTypeArguments(Class<?> clazz) {
@@ -295,7 +297,8 @@ public abstract class ReflectionUtils {
 	/**
 	 * Gets the actual type arguments of a Type.
 	 *
-	 * @param type The type to examine
+	 * @param type
+	 *          The type to examine
 	 * @return The type arguments
 	 */
 	public static Type[] getActualTypeArguments(Type type) {
@@ -309,7 +312,8 @@ public abstract class ReflectionUtils {
 	/**
 	 * Checks if raw type is array type.
 	 *
-	 * @param rawType The raw type to check
+	 * @param rawType
+	 *          The raw type to check
 	 * @return True if array, false otherwise
 	 */
 	public static boolean isArrayType(Class<?> rawType) {
@@ -319,7 +323,8 @@ public abstract class ReflectionUtils {
 	/**
 	 * Checks if type is parameterized type.
 	 *
-	 * @param type The type to check
+	 * @param type
+	 *          The type to check
 	 * @return True if parameterized, false otherwise
 	 */
 	public static boolean isParameterizedType(Class<?> type) {
@@ -351,15 +356,12 @@ public abstract class ReflectionUtils {
 	public static int calculateHashCodeOfAnnotation(Annotation annotation, boolean skipNonbindingMembers) {
 		Class annotationClass = annotation.annotationType();
 
-		// the hashCode of an Annotation is calculated solely via the hashCodes
-		// of it's members. If there are no members, it is 0.
-		// thus we first need to get the annotation-class hashCode
+		// the hashCode of an Annotation is calculated solely via the hashCodes of it's members. If there are no members, it is 0. thus we
+		// first need to get the annotation-class hashCode
 		int hashCode = calculateHashCodeOfType(annotationClass);
 
-		// and now add the hashCode of all it's Nonbinding members
-		// the following algorithm is defined by the Annotation class definition
-		// see the JavaDoc for Annotation!
-		// we only change it so far that we skip evaluating @Nonbinding members
+		// and now add the hashCode of all it's Nonbinding members the following algorithm is defined by the Annotation class definition
+		// see the JavaDoc for Annotation! we only change it so far that we skip evaluating @Nonbinding members
 		final Method[] members = annotationClass.getDeclaredMethods();
 
 		for (Method member : members) {
@@ -408,23 +410,20 @@ public abstract class ReflectionUtils {
 	}
 
 	/**
-	 * We need this method as some weird JVMs return 0 as hashCode for classes.
-	 * In that case we return the hashCode of the String.
+	 * We need this method as some weird JVMs return 0 as hashCode for classes. In that case we return the hashCode of the String.
 	 */
 	public static int calculateHashCodeOfType(Type type) {
 		int typeHash = type.hashCode();
 		if (typeHash == 0 && type instanceof Class) {
 			return ((Class) type).getName().hashCode();
-			// the type.toString() is always the same: "java.lang.Class@<hexid>"
-			// was: return type.toString().hashCode();
+			// the type.toString() is always the same: "java.lang.Class@<hexid>" was: return type.toString().hashCode();
 		}
 
 		return typeHash;
 	}
 
 	public static boolean hasSameSignature(Method a, Method b) {
-		return a.getName().equals(b.getName())
-				&& a.getReturnType().equals(b.getReturnType())
+		return a.getName().equals(b.getName()) && a.getReturnType().equals(b.getReturnType())
 				&& Arrays.equals(a.getParameterTypes(), b.getParameterTypes());
 	}
 
