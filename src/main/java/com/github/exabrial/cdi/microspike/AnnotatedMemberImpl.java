@@ -28,8 +28,8 @@ abstract class AnnotatedMemberImpl<X, M extends Member> extends AnnotatedImpl im
 	private final AnnotatedType<X> declaringType;
 	private final M javaMember;
 
-	protected AnnotatedMemberImpl(AnnotatedType<X> declaringType, M member, Class<?> memberType, AnnotationStore annotations,
-			Type genericType, Type overriddenType) {
+	protected AnnotatedMemberImpl(final AnnotatedType<X> declaringType, final M member, final Class<?> memberType,
+			final AnnotationStore annotations, final Type genericType, final Type overriddenType) {
 		super(memberType, annotations, genericType, overriddenType);
 		this.declaringType = declaringType;
 		javaMember = member;

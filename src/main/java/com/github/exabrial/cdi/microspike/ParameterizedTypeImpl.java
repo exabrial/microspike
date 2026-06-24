@@ -28,20 +28,23 @@ class ParameterizedTypeImpl implements ParameterizedType {
 	private final Type rawType;
 	private final Type ownerType;
 
-	ParameterizedTypeImpl(Type rawType, Type[] actualTypeArguments, Type ownerType) {
+	ParameterizedTypeImpl(final Type rawType, final Type[] actualTypeArguments, final Type ownerType) {
 		this.actualTypeArguments = actualTypeArguments;
 		this.rawType = rawType;
 		this.ownerType = ownerType;
 	}
 
+	@Override
 	public Type[] getActualTypeArguments() {
 		return Arrays.copyOf(actualTypeArguments, actualTypeArguments.length);
 	}
 
+	@Override
 	public Type getOwnerType() {
 		return ownerType;
 	}
 
+	@Override
 	public Type getRawType() {
 		return rawType;
 	}
@@ -53,13 +56,12 @@ class ParameterizedTypeImpl implements ParameterizedType {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(final Object obj) {
 		if (this == obj) {
 			return true;
-		} else if (obj instanceof ParameterizedType) {
-			ParameterizedType that = (ParameterizedType) obj;
-			Type thatOwnerType = that.getOwnerType();
-			Type thatRawType = that.getRawType();
+		} else if (obj instanceof final ParameterizedType that) {
+			final Type thatOwnerType = that.getOwnerType();
+			final Type thatRawType = that.getRawType();
 			return (ownerType == null ? thatOwnerType == null : ownerType.equals(thatOwnerType))
 					&& (rawType == null ? thatRawType == null : rawType.equals(thatRawType))
 					&& Arrays.equals(actualTypeArguments, that.getActualTypeArguments());
@@ -71,11 +73,11 @@ class ParameterizedTypeImpl implements ParameterizedType {
 
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
+		final StringBuilder sb = new StringBuilder();
 		sb.append(rawType);
 		if (actualTypeArguments.length > 0) {
 			sb.append("<");
-			for (Type actualType : actualTypeArguments) {
+			for (final Type actualType : actualTypeArguments) {
 				sb.append(actualType);
 				sb.append(",");
 			}

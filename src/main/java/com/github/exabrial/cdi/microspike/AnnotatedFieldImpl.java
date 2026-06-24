@@ -28,7 +28,8 @@ class AnnotatedFieldImpl<X> extends AnnotatedMemberImpl<X, Field> implements Ann
 	/**
 	 * Constructor.
 	 */
-	AnnotatedFieldImpl(AnnotatedType<X> declaringType, Field field, AnnotationStore annotations, Type overriddenType) {
+	AnnotatedFieldImpl(final AnnotatedType<X> declaringType, final Field field, final AnnotationStore annotations,
+			final Type overriddenType) {
 		super(declaringType, field, field.getType(), annotations, field.getGenericType(), overriddenType);
 	}
 

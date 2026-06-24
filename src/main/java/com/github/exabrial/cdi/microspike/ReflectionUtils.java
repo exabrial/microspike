@@ -38,8 +38,9 @@ import jakarta.enterprise.util.Nonbinding;
 // X TODO: Look at merging this with some of the other classes from CODI, or if they're really needed X TODO: Also some methods need
 // JavaDoc
 @Typed()
+@SuppressWarnings({ "deprecation", "rawtypes", "removal" })
 public abstract class ReflectionUtils {
-	private static final Object[] EMPTY_OBJECT_ARRAY = new Object[0];
+	private static final Object[] EMPTY_OBJECT_ARRAY = {};
 
 	private ReflectionUtils() {
 		// prevent instantiation
@@ -52,8 +53,8 @@ public abstract class ReflectionUtils {
 	 *          The class to search
 	 * @return the set of all declared fields or an empty set if there are none
 	 */
-	public static Set<Field> getAllDeclaredFields(Class<?> clazz) {
-		HashSet<Field> fields = new HashSet<Field>();
+	public static Set<Field> getAllDeclaredFields(final Class<?> clazz) {
+		final HashSet<Field> fields = new HashSet<>();
 		for (Class<?> c = clazz; c != null && c != Object.class; c = c.getSuperclass()) {
 			Collections.addAll(fields, c.getDeclaredFields());
 		}
@@ -70,11 +71,11 @@ public abstract class ReflectionUtils {
 	 *          The name of the field to search for
 	 * @return The field found, or null if no field is found
 	 */
-	public static Field tryToFindDeclaredField(Class<?> clazz, String name) {
+	public static Field tryToFindDeclaredField(final Class<?> clazz, final String name) {
 		for (Class<?> c = clazz; c != null && c != Object.class; c = c.getSuperclass()) {
 			try {
 				return c.getDeclaredField(name);
-			} catch (NoSuchFieldException e) {
+			} catch (final NoSuchFieldException e) {
 				// No-op, we continue looking up the class hierarchy
 				assert true;
 			}
@@ -89,16 +90,16 @@ public abstract class ReflectionUtils {
 	 *          The class to search
 	 * @return the set of all declared methods or an empty set if there are none
 	 */
-	public static Set<Method> getAllDeclaredMethods(Class<?> clazz) {
-		HashSet<Method> methods = new HashSet<Method>();
+	public static Set<Method> getAllDeclaredMethods(final Class<?> clazz) {
+		final HashSet<Method> methods = new HashSet<>();
 		for (Class<?> c = clazz; c != null && c != Object.class; c = c.getSuperclass()) {
 			Collections.addAll(methods, c.getDeclaredMethods());
 		}
 		return methods;
 	}
 
-	private static String buildInvokeMethodErrorMessage(Method method, Object obj, Object... args) {
-		StringBuilder message = new StringBuilder(
+	private static String buildInvokeMethodErrorMessage(final Method method, final Object obj, final Object... args) {
+		final StringBuilder message = new StringBuilder(
 				String.format("Details: Exception invoking method [%s] on object [%s], using arguments [", method.getName(), obj));
 		if (args != null) {
 			for (int i = 0; i < args.length; i++) {
@@ -150,8 +151,8 @@ public abstract class ReflectionUtils {
 	 *           if the initialization provoked by this method fails.
 	 * @see Method#invoke(Object, Object...)
 	 */
-	public static <T> T invokeMethod(Object instance, Method method, Class<T> expectedReturnType, boolean setAccessible,
-			Object... args) {
+	public static <T> T invokeMethod(final Object instance, final Method method, final Class<T> expectedReturnType,
+			final boolean setAccessible, final Object... args) {
 		if (setAccessible && !method.isAccessible()) {
 			if (System.getSecurityManager() != null) {
 				AccessController.doPrivileged(new SetAccessiblePrivilegedAction(method));
@@ -162,20 +163,21 @@ public abstract class ReflectionUtils {
 
 		try {
 			return expectedReturnType.cast(method.invoke(instance, args));
-		} catch (InvocationTargetException e) {
+		} catch (final InvocationTargetException e) {
 			// re-visit DELTASPIKE-299 before changing this part
 			ExceptionUtils.throwAsRuntimeException(e.getCause());
 			// won't happen
 			return null;
-		} catch (Exception e) {
-			String customMessage = createCustomMessage(e, method, instance, args);
+		} catch (final Exception e) {
+			final String customMessage = createCustomMessage(e, method, instance, args);
 			ExceptionUtils.changeAndThrowException(e, customMessage);
 			// won't happen
 			return null;
 		}
 	}
 
-	private static String createCustomMessage(Exception e, Method method, Object targetObject, Object... arguments) {
+	private static String createCustomMessage(final Exception e, final Method method, final Object targetObject,
+			final Object... arguments) {
 		return e.getMessage() + buildInvokeMethodErrorMessage(method, targetObject, arguments);
 	}
 
@@ -189,7 +191,7 @@ public abstract class ReflectionUtils {
 	 * @return the raw type, or null if the raw type cannot be determined.
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T> Class<T> getRawType(Type type) {
+	public static <T> Class<T> getRawType(final Type type) {
 		if (type instanceof Class<?>) {
 			return (Class<T>) type;
 		} else if (type instanceof ParameterizedType && ((ParameterizedType) type).getRawType() instanceof Class<?>) {
@@ -205,7 +207,7 @@ public abstract class ReflectionUtils {
 	 *          The class to check
 	 * @return true if the class implements serializable or is a primitive (needed for type {@link Void}
 	 */
-	public static boolean isSerializable(Class<?> clazz) {
+	public static boolean isSerializable(final Class<?> clazz) {
 		return clazz.isPrimitive() || Serializable.class.isAssignableFrom(clazz);
 	}
 
@@ -216,7 +218,7 @@ public abstract class ReflectionUtils {
 	 *          The class to check
 	 * @return True if final, false otherwise
 	 */
-	public static boolean isFinal(Class<?> clazz) {
+	public static boolean isFinal(final Class<?> clazz) {
 		return Modifier.isFinal(clazz.getModifiers());
 	}
 
@@ -227,7 +229,7 @@ public abstract class ReflectionUtils {
 	 *          The member to check
 	 * @return True if final, false otherwise
 	 */
-	public static boolean isFinal(Member member) {
+	public static boolean isFinal(final Member member) {
 		return Modifier.isFinal(member.getModifiers());
 	}
 
@@ -238,11 +240,11 @@ public abstract class ReflectionUtils {
 	 *          The member to check
 	 * @return True if final, false otherwise
 	 */
-	public static boolean isPrivate(Member member) {
+	public static boolean isPrivate(final Member member) {
 		return Modifier.isPrivate(member.getModifiers());
 	}
 
-	public static boolean isPackagePrivate(int mod) {
+	public static boolean isPackagePrivate(final int mod) {
 		return !(Modifier.isPrivate(mod) || Modifier.isProtected(mod) || Modifier.isPublic(mod));
 	}
 
@@ -253,7 +255,7 @@ public abstract class ReflectionUtils {
 	 *          Type to check
 	 * @return True if static, false otherwise
 	 */
-	public static boolean isStatic(Class<?> type) {
+	public static boolean isStatic(final Class<?> type) {
 		return Modifier.isStatic(type.getModifiers());
 	}
 
@@ -264,18 +266,18 @@ public abstract class ReflectionUtils {
 	 *          Member to check
 	 * @return True if static, false otherwise
 	 */
-	public static boolean isStatic(Member member) {
+	public static boolean isStatic(final Member member) {
 		return Modifier.isStatic(member.getModifiers());
 	}
 
-	public static boolean isTransient(Member member) {
+	public static boolean isTransient(final Member member) {
 		return Modifier.isTransient(member.getModifiers());
 	}
 
 	/**
 	 * Checks if a method is abstract.
 	 */
-	public static boolean isAbstract(Method method) {
+	public static boolean isAbstract(final Method method) {
 		return Modifier.isAbstract(method.getModifiers());
 	}
 
@@ -286,7 +288,7 @@ public abstract class ReflectionUtils {
 	 *          The class to examine
 	 * @return The type arguments
 	 */
-	public static Type[] getActualTypeArguments(Class<?> clazz) {
+	public static Type[] getActualTypeArguments(final Class<?> clazz) {
 		if (clazz == null) {
 			throw new IllegalArgumentException("null isn't supported");
 		}
@@ -301,7 +303,7 @@ public abstract class ReflectionUtils {
 	 *          The type to examine
 	 * @return The type arguments
 	 */
-	public static Type[] getActualTypeArguments(Type type) {
+	public static Type[] getActualTypeArguments(final Type type) {
 		if (type instanceof Class) {
 			return getActualTypeArguments((Class) type);
 		}
@@ -316,7 +318,7 @@ public abstract class ReflectionUtils {
 	 *          The raw type to check
 	 * @return True if array, false otherwise
 	 */
-	public static boolean isArrayType(Class<?> rawType) {
+	public static boolean isArrayType(final Class<?> rawType) {
 		return rawType.isArray();
 	}
 
@@ -327,11 +329,11 @@ public abstract class ReflectionUtils {
 	 *          The type to check
 	 * @return True if parameterized, false otherwise
 	 */
-	public static boolean isParameterizedType(Class<?> type) {
+	public static boolean isParameterizedType(final Class<?> type) {
 		return type.getTypeParameters().length > 0;
 	}
 
-	public static boolean isParameterizedTypeWithWildcard(Class<?> type) {
+	public static boolean isParameterizedTypeWithWildcard(final Class<?> type) {
 		if (isParameterizedType(type)) {
 			return containsWildcards(type.getTypeParameters());
 		} else {
@@ -339,8 +341,8 @@ public abstract class ReflectionUtils {
 		}
 	}
 
-	private static boolean containsWildcards(Type[] types) {
-		for (Type type : types) {
+	private static boolean containsWildcards(final Type[] types) {
+		for (final Type type : types) {
 			if (type instanceof WildcardType) {
 				return true;
 			}
@@ -348,13 +350,13 @@ public abstract class ReflectionUtils {
 		return false;
 	}
 
-	public static boolean isPrimitive(Type type) {
-		Class<?> rawType = getRawType(type);
+	public static boolean isPrimitive(final Type type) {
+		final Class<?> rawType = getRawType(type);
 		return rawType != null && rawType.isPrimitive();
 	}
 
-	public static int calculateHashCodeOfAnnotation(Annotation annotation, boolean skipNonbindingMembers) {
-		Class annotationClass = annotation.annotationType();
+	public static int calculateHashCodeOfAnnotation(final Annotation annotation, final boolean skipNonbindingMembers) {
+		final Class annotationClass = annotation.annotationType();
 
 		// the hashCode of an Annotation is calculated solely via the hashCodes of it's members. If there are no members, it is 0. thus we
 		// first need to get the annotation-class hashCode
@@ -364,7 +366,7 @@ public abstract class ReflectionUtils {
 		// see the JavaDoc for Annotation! we only change it so far that we skip evaluating @Nonbinding members
 		final Method[] members = annotationClass.getDeclaredMethods();
 
-		for (Method member : members) {
+		for (final Method member : members) {
 			if (skipNonbindingMembers && member.isAnnotationPresent(Nonbinding.class)) {
 				// ignore the non binding
 				continue;
@@ -374,7 +376,7 @@ public abstract class ReflectionUtils {
 			final Object object = invokeMethod(annotation, member, Object.class, true, EMPTY_OBJECT_ARRAY);
 			final int value;
 			if (object.getClass().isArray()) {
-				Class<?> type = object.getClass().getComponentType();
+				final Class<?> type = object.getClass().getComponentType();
 				if (type.isPrimitive()) {
 					if (Long.TYPE == type) {
 						value = Arrays.hashCode((long[]) object);
@@ -412,8 +414,8 @@ public abstract class ReflectionUtils {
 	/**
 	 * We need this method as some weird JVMs return 0 as hashCode for classes. In that case we return the hashCode of the String.
 	 */
-	public static int calculateHashCodeOfType(Type type) {
-		int typeHash = type.hashCode();
+	public static int calculateHashCodeOfType(final Type type) {
+		final int typeHash = type.hashCode();
 		if (typeHash == 0 && type instanceof Class) {
 			return ((Class) type).getName().hashCode();
 			// the type.toString() is always the same: "java.lang.Class@<hexid>" was: return type.toString().hashCode();
@@ -422,7 +424,7 @@ public abstract class ReflectionUtils {
 		return typeHash;
 	}
 
-	public static boolean hasSameSignature(Method a, Method b) {
+	public static boolean hasSameSignature(final Method a, final Method b) {
 		return a.getName().equals(b.getName()) && a.getReturnType().equals(b.getReturnType())
 				&& Arrays.equals(a.getParameterTypes(), b.getParameterTypes());
 	}

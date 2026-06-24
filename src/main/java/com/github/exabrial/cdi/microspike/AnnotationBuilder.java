@@ -27,6 +27,7 @@ import java.util.Set;
  * manipulation.
  */
 // this class is intentionally made package scope
+@SuppressWarnings("unchecked")
 class AnnotationBuilder {
 	private final Map<Class<? extends Annotation>, Annotation> annotationMap;
 	private final Set<Annotation> annotationSet;
@@ -35,8 +36,8 @@ class AnnotationBuilder {
 	 * Default constructor.
 	 */
 	AnnotationBuilder() {
-		annotationMap = new HashMap<Class<? extends Annotation>, Annotation>();
-		annotationSet = new HashSet<Annotation>();
+		annotationMap = new HashMap<>();
+		annotationSet = new HashSet<>();
 	}
 
 	/**
@@ -46,7 +47,7 @@ class AnnotationBuilder {
 	 *          annotation to be added
 	 * @return this
 	 */
-	public AnnotationBuilder add(Annotation annotation) {
+	public AnnotationBuilder add(final Annotation annotation) {
 		if (annotation == null) {
 			throw new IllegalArgumentException("annotation parameter must not be null");
 		}
@@ -62,14 +63,14 @@ class AnnotationBuilder {
 	 *          to be removed
 	 * @return this
 	 */
-	public AnnotationBuilder remove(Class<? extends Annotation> annotationType) {
+	public AnnotationBuilder remove(final Class<? extends Annotation> annotationType) {
 		if (annotationType == null) {
 			throw new IllegalArgumentException("annotationType parameter must not be null");
 		}
 
-		Iterator<Annotation> it = annotationSet.iterator();
+		final Iterator<Annotation> it = annotationSet.iterator();
 		while (it.hasNext()) {
-			Annotation an = it.next();
+			final Annotation an = it.next();
 			if (annotationType.isAssignableFrom(an.annotationType())) {
 				it.remove();
 			}
@@ -94,8 +95,8 @@ class AnnotationBuilder {
 	 *          collection of annotations to be added
 	 * @return this
 	 */
-	public AnnotationBuilder addAll(Collection<Annotation> annotations) {
-		for (Annotation annotation : annotations) {
+	public AnnotationBuilder addAll(final Collection<Annotation> annotations) {
+		for (final Annotation annotation : annotations) {
 			add(annotation);
 		}
 		return this;
@@ -108,8 +109,8 @@ class AnnotationBuilder {
 	 *          annotations to be added
 	 * @return this
 	 */
-	public AnnotationBuilder addAll(AnnotationStore annotations) {
-		for (Annotation annotation : annotations.getAnnotations()) {
+	public AnnotationBuilder addAll(final AnnotationStore annotations) {
+		for (final Annotation annotation : annotations.getAnnotations()) {
 			add(annotation);
 		}
 		return this;
@@ -122,8 +123,8 @@ class AnnotationBuilder {
 	 *          element containing annotations to be added
 	 * @return this
 	 */
-	public AnnotationBuilder addAll(AnnotatedElement element) {
-		for (Annotation a : element.getAnnotations()) {
+	public AnnotationBuilder addAll(final AnnotatedElement element) {
+		for (final Annotation a : element.getAnnotations()) {
 			add(a);
 		}
 		return this;
@@ -132,14 +133,14 @@ class AnnotationBuilder {
 	/**
 	 * Getter.
 	 */
-	public <T extends Annotation> T getAnnotation(Class<T> anType) {
+	public <T extends Annotation> T getAnnotation(final Class<T> anType) {
 		return (T) annotationMap.get(anType);
 	}
 
 	/**
 	 * Simple check for an annotation.
 	 */
-	public boolean isAnnotationPresent(Class<?> annotationType) {
+	public boolean isAnnotationPresent(final Class<?> annotationType) {
 		return annotationMap.containsKey(annotationType);
 	}
 

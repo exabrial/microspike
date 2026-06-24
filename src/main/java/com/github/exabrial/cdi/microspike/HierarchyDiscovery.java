@@ -35,11 +35,11 @@ public class HierarchyDiscovery {
 
 	private Map<Type, Class<?>> types;
 
-	public HierarchyDiscovery(Type type) {
+	public HierarchyDiscovery(final Type type) {
 		this.type = type;
 	}
 
-	protected void add(Class<?> clazz, Type type) {
+	protected void add(final Class<?> clazz, final Type type) {
 		types.put(type, clazz);
 	}
 
@@ -48,15 +48,15 @@ public class HierarchyDiscovery {
 			init();
 		}
 		// Return an independent set with no ties to the BiMap used
-		return new HashSet<Type>(types.keySet());
+		return new HashSet<>(types.keySet());
 	}
 
 	private void init() {
-		types = new HashMap<Type, Class<?>>();
+		types = new HashMap<>();
 		try {
 			discoverTypes(type);
-		} catch (StackOverflowError e) {
-			Logger logger = Logger.getLogger(HierarchyDiscovery.class.getName());
+		} catch (final StackOverflowError e) {
+			final Logger logger = Logger.getLogger(HierarchyDiscovery.class.getName());
 
 			logger.log(Level.WARNING, "type: " + type.toString(), e);
 			Thread.dumpStack();
@@ -65,23 +65,21 @@ public class HierarchyDiscovery {
 	}
 
 	public Type getResolvedType() {
-		if (type instanceof Class<?>) {
-			Class<?> clazz = (Class<?>) type;
+		if (type instanceof final Class<?> clazz) {
 			return resolveType(clazz);
 		}
 		return type;
 	}
 
-	private void discoverTypes(Type type) {
+	private void discoverTypes(final Type type) {
 		if (type != null) {
-			if (type instanceof Class<?>) {
-				Class<?> clazz = (Class<?>) type;
+			if (type instanceof final Class<?> clazz) {
 				add(clazz, resolveType(clazz));
 				discoverFromClass(clazz);
 			} else {
 				Class<?> clazz = null;
 				if (type instanceof ParameterizedType) {
-					Type rawType = ((ParameterizedType) type).getRawType();
+					final Type rawType = ((ParameterizedType) type).getRawType();
 					if (rawType instanceof Class<?>) {
 						discoverFromClass((Class<?>) rawType);
 						clazz = (Class<?>) rawType;
@@ -92,12 +90,11 @@ public class HierarchyDiscovery {
 		}
 	}
 
-	private Type resolveType(Class<?> clazz) {
+	private Type resolveType(final Class<?> clazz) {
 		if (clazz.getTypeParameters().length > 0) {
-			TypeVariable<?>[] actualTypeParameters = clazz.getTypeParameters();
+			final TypeVariable<?>[] actualTypeParameters = clazz.getTypeParameters();
 
-			@SuppressWarnings("UnnecessaryLocalVariable")
-			ParameterizedType parameterizedType = new ParameterizedTypeImpl(clazz, actualTypeParameters, clazz.getDeclaringClass());
+			final ParameterizedType parameterizedType = new ParameterizedTypeImpl(clazz, actualTypeParameters, clazz.getDeclaringClass());
 			return parameterizedType;
 		} else {
 			return clazz;
@@ -109,7 +106,7 @@ public class HierarchyDiscovery {
 	 *
 	 * @return actual type
 	 */
-	private Type resolveType(Type beanType, Type beanType2, Type type) {
+	private Type resolveType(final Type beanType, final Type beanType2, final Type type) {
 		if (type instanceof ParameterizedType) {
 			if (beanType instanceof ParameterizedType) {
 				return resolveParameterizedType((ParameterizedType) beanType, (ParameterizedType) type);
@@ -130,19 +127,19 @@ public class HierarchyDiscovery {
 		return type;
 	}
 
-	private void discoverFromClass(Class<?> clazz) {
+	private void discoverFromClass(final Class<?> clazz) {
 		discoverTypes(resolveType(type, type, clazz.getGenericSuperclass()));
-		for (Type c : clazz.getGenericInterfaces()) {
+		for (final Type c : clazz.getGenericInterfaces()) {
 			discoverTypes(resolveType(type, type, c));
 		}
 	}
 
-	private Type resolveParameterizedType(ParameterizedType beanType, ParameterizedType parameterizedType) {
-		Type rawType = parameterizedType.getRawType();
-		Type[] actualTypes = parameterizedType.getActualTypeArguments();
+	private Type resolveParameterizedType(final ParameterizedType beanType, final ParameterizedType parameterizedType) {
+		final Type rawType = parameterizedType.getRawType();
+		final Type[] actualTypes = parameterizedType.getActualTypeArguments();
 
-		Type resolvedRawType = resolveType(beanType, beanType, rawType);
-		Type[] resolvedActualTypes = new Type[actualTypes.length];
+		final Type resolvedRawType = resolveType(beanType, beanType, rawType);
+		final Type[] resolvedActualTypes = new Type[actualTypes.length];
 
 		for (int i = 0; i < actualTypes.length; i++) {
 			resolvedActualTypes[i] = resolveType(beanType, beanType, actualTypes[i]);
@@ -151,11 +148,11 @@ public class HierarchyDiscovery {
 		return new ParameterizedTypeImpl(resolvedRawType, resolvedActualTypes, parameterizedType.getOwnerType());
 	}
 
-	private Type resolveTypeParameter(ParameterizedType type, Type beanType, TypeVariable<?> typeVariable) {
+	private Type resolveTypeParameter(final ParameterizedType type, final Type beanType, final TypeVariable<?> typeVariable) {
 		// step1. raw type
-		Class<?> actualType = (Class<?>) type.getRawType();
-		TypeVariable<?>[] typeVariables = actualType.getTypeParameters();
-		Type[] actualTypes = type.getActualTypeArguments();
+		final Class<?> actualType = (Class<?>) type.getRawType();
+		final TypeVariable<?>[] typeVariables = actualType.getTypeParameters();
+		final Type[] actualTypes = type.getActualTypeArguments();
 		for (int i = 0; i < typeVariables.length; i++) {
 			if (typeVariables[i].equals(typeVariable) && !actualTypes[i].equals(typeVariable)) {
 				return resolveType(this.type, beanType, actualTypes[i]);
@@ -163,16 +160,16 @@ public class HierarchyDiscovery {
 		}
 
 		// step2. generic super class
-		Type genericSuperType = actualType.getGenericSuperclass();
-		Type resolvedGenericSuperType = resolveType(genericSuperType, beanType, typeVariable);
+		final Type genericSuperType = actualType.getGenericSuperclass();
+		final Type resolvedGenericSuperType = resolveType(genericSuperType, beanType, typeVariable);
 		if (!(resolvedGenericSuperType instanceof TypeVariable<?>)) {
 			return resolvedGenericSuperType;
 		}
 
 		// step3. generic interfaces
 		if (beanType instanceof ParameterizedType) {
-			for (Type interfaceType : ((Class<?>) ((ParameterizedType) beanType).getRawType()).getGenericInterfaces()) {
-				Type resolvedType = resolveType(interfaceType, interfaceType, typeVariable);
+			for (final Type interfaceType : ((Class<?>) ((ParameterizedType) beanType).getRawType()).getGenericInterfaces()) {
+				final Type resolvedType = resolveType(interfaceType, interfaceType, typeVariable);
 				if (!(resolvedType instanceof TypeVariable<?>)) {
 					return resolvedType;
 				}

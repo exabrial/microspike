@@ -46,55 +46,57 @@ class AnnotatedTypeImpl<X> extends AnnotatedImpl implements AnnotatedType<X> {
 	 * <p/>
 	 * If annotation have been added to other methods as well we add them to
 	 */
-	AnnotatedTypeImpl(Class<X> clazz, AnnotationStore typeAnnotations, Map<Field, AnnotationStore> fieldAnnotations,
-			Map<Method, AnnotationStore> methodAnnotations, Map<Method, Map<Integer, AnnotationStore>> methodParameterAnnotations,
-			Map<Constructor<?>, AnnotationStore> constructorAnnotations,
-			Map<Constructor<?>, Map<Integer, AnnotationStore>> constructorParameterAnnotations, Map<Field, Type> fieldTypes,
-			Map<Method, Map<Integer, Type>> methodParameterTypes, Map<Constructor<?>, Map<Integer, Type>> constructorParameterTypes) {
+	AnnotatedTypeImpl(final Class<X> clazz, final AnnotationStore typeAnnotations, final Map<Field, AnnotationStore> fieldAnnotations,
+			final Map<Method, AnnotationStore> methodAnnotations,
+			final Map<Method, Map<Integer, AnnotationStore>> methodParameterAnnotations,
+			final Map<Constructor<?>, AnnotationStore> constructorAnnotations,
+			final Map<Constructor<?>, Map<Integer, AnnotationStore>> constructorParameterAnnotations, final Map<Field, Type> fieldTypes,
+			final Map<Method, Map<Integer, Type>> methodParameterTypes,
+			final Map<Constructor<?>, Map<Integer, Type>> constructorParameterTypes) {
 		super(clazz, typeAnnotations, null, null);
 		javaClass = clazz;
-		constructors = new HashSet<AnnotatedConstructor<X>>();
-		Set<Constructor<?>> cset = new HashSet<Constructor<?>>();
-		Set<Method> mset = new HashSet<Method>();
-		Set<Field> fset = new HashSet<Field>();
-		for (Constructor<?> c : clazz.getConstructors()) {
-			AnnotatedConstructor<X> nc = new AnnotatedConstructorImpl<X>(this, c, constructorAnnotations.get(c),
+		constructors = new HashSet<>();
+		final Set<Constructor<?>> cset = new HashSet<>();
+		final Set<Method> mset = new HashSet<>();
+		final Set<Field> fset = new HashSet<>();
+		for (final Constructor<?> c : clazz.getConstructors()) {
+			final AnnotatedConstructor<X> nc = new AnnotatedConstructorImpl<>(this, c, constructorAnnotations.get(c),
 					constructorParameterAnnotations.get(c), constructorParameterTypes.get(c));
 			constructors.add(nc);
 			cset.add(c);
 		}
-		for (Map.Entry<Constructor<?>, AnnotationStore> c : constructorAnnotations.entrySet()) {
+		for (final Map.Entry<Constructor<?>, AnnotationStore> c : constructorAnnotations.entrySet()) {
 			if (!cset.contains(c.getKey())) {
-				AnnotatedConstructor<X> nc = new AnnotatedConstructorImpl<X>(this, c.getKey(), c.getValue(),
+				final AnnotatedConstructor<X> nc = new AnnotatedConstructorImpl<>(this, c.getKey(), c.getValue(),
 						constructorParameterAnnotations.get(c.getKey()), constructorParameterTypes.get(c.getKey()));
 				constructors.add(nc);
 			}
 		}
-		methods = new HashSet<AnnotatedMethod<? super X>>();
-		for (Method m : clazz.getMethods()) {
+		methods = new HashSet<>();
+		for (final Method m : clazz.getMethods()) {
 			if (!m.getDeclaringClass().equals(Object.class) && !m.getDeclaringClass().equals(Annotation.class)) {
-				AnnotatedMethodImpl<X> met = new AnnotatedMethodImpl<X>(this, m, methodAnnotations.get(m), methodParameterAnnotations.get(m),
-						methodParameterTypes.get(m));
+				final AnnotatedMethodImpl<X> met = new AnnotatedMethodImpl<>(this, m, methodAnnotations.get(m),
+						methodParameterAnnotations.get(m), methodParameterTypes.get(m));
 				methods.add(met);
 				mset.add(m);
 			}
 		}
-		for (Map.Entry<Method, AnnotationStore> c : methodAnnotations.entrySet()) {
+		for (final Map.Entry<Method, AnnotationStore> c : methodAnnotations.entrySet()) {
 			if (!c.getKey().getDeclaringClass().equals(Object.class) && !mset.contains(c.getKey())) {
-				AnnotatedMethodImpl<X> nc = new AnnotatedMethodImpl<X>(this, c.getKey(), c.getValue(),
+				final AnnotatedMethodImpl<X> nc = new AnnotatedMethodImpl<>(this, c.getKey(), c.getValue(),
 						methodParameterAnnotations.get(c.getKey()), methodParameterTypes.get(c.getKey()));
 				methods.add(nc);
 			}
 		}
-		fields = new HashSet<AnnotatedField<? super X>>();
-		for (Field f : clazz.getFields()) {
-			AnnotatedField<X> b = new AnnotatedFieldImpl<X>(this, f, fieldAnnotations.get(f), fieldTypes.get(f));
+		fields = new HashSet<>();
+		for (final Field f : clazz.getFields()) {
+			final AnnotatedField<X> b = new AnnotatedFieldImpl<>(this, f, fieldAnnotations.get(f), fieldTypes.get(f));
 			fields.add(b);
 			fset.add(f);
 		}
-		for (Map.Entry<Field, AnnotationStore> e : fieldAnnotations.entrySet()) {
+		for (final Map.Entry<Field, AnnotationStore> e : fieldAnnotations.entrySet()) {
 			if (!fset.contains(e.getKey())) {
-				fields.add(new AnnotatedFieldImpl<X>(this, e.getKey(), e.getValue(), fieldTypes.get(e.getKey())));
+				fields.add(new AnnotatedFieldImpl<>(this, e.getKey(), e.getValue(), fieldTypes.get(e.getKey())));
 			}
 		}
 	}

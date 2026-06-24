@@ -37,7 +37,7 @@ import java.util.Map;
  * <p>
  * usage:
  * </p>
- * 
+ *
  * <pre>
  * String annotationClassName = ...;
  * Class<? extends annotation> annotationClass =
@@ -45,10 +45,11 @@ import java.util.Map;
  * Annotation a = AnnotationInstanceProvider.of(annotationClass)
  * </pre>
  */
+@SuppressWarnings("rawtypes")
 public class AnnotationInstanceProvider implements Annotation, InvocationHandler, Serializable {
 	private static final long serialVersionUID = -2345068201195886173L;
-	private static final Object[] EMPTY_OBJECT_ARRAY = new Object[0];
-	private static final Class[] EMPTY_CLASS_ARRAY = new Class[0];
+	private static final Object[] EMPTY_OBJECT_ARRAY = {};
+	private static final Class[] EMPTY_CLASS_ARRAY = {};
 
 	private final Class<? extends Annotation> annotationClass;
 	private final Map<String, ?> memberValues;
@@ -59,7 +60,7 @@ public class AnnotationInstanceProvider implements Annotation, InvocationHandler
 	 * @param annotationClass
 	 *          class of the target annotation
 	 */
-	private AnnotationInstanceProvider(Class<? extends Annotation> annotationClass, Map<String, ?> memberValues) {
+	private AnnotationInstanceProvider(final Class<? extends Annotation> annotationClass, final Map<String, ?> memberValues) {
 		this.annotationClass = annotationClass;
 		this.memberValues = memberValues;
 	}
@@ -76,7 +77,7 @@ public class AnnotationInstanceProvider implements Annotation, InvocationHandler
 	 * @return annotation instance for the given type
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T extends Annotation> T of(Class<T> annotationClass, Map<String, ?> values) {
+	public static <T extends Annotation> T of(final Class<T> annotationClass, final Map<String, ?> values) {
 		if (values == null) {
 			throw new IllegalArgumentException("Map of values must not be null");
 		}
@@ -94,11 +95,12 @@ public class AnnotationInstanceProvider implements Annotation, InvocationHandler
 	 * @return annotation instance for the given type
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T extends Annotation> T of(Class<T> annotationClass) {
+	public static <T extends Annotation> T of(final Class<T> annotationClass) {
 		return (T) of(annotationClass, Collections.EMPTY_MAP);
 	}
 
-	private static synchronized <T extends Annotation> Annotation initAnnotation(Class<T> annotationClass, Map<String, ?> values) {
+	private static synchronized <T extends Annotation> Annotation initAnnotation(final Class<T> annotationClass,
+			final Map<String, ?> values) {
 		return (Annotation) Proxy.newProxyInstance(annotationClass.getClassLoader(), new Class[] { annotationClass },
 				new AnnotationInstanceProvider(annotationClass, values));
 	}
@@ -112,7 +114,7 @@ public class AnnotationInstanceProvider implements Annotation, InvocationHandler
 	 *          the array
 	 * @return a hash code for the specified array
 	 */
-	private static int arrayMemberHash(Class<?> componentType, Object o) {
+	private static int arrayMemberHash(final Class<?> componentType, final Object o) {
 		if (componentType.equals(Byte.TYPE)) {
 			return Arrays.hashCode((byte[]) o);
 		}
@@ -144,7 +146,7 @@ public class AnnotationInstanceProvider implements Annotation, InvocationHandler
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Object invoke(Object proxy, Method method, Object[] args) throws Exception {
+	public Object invoke(final Object proxy, final Method method, final Object[] args) throws Exception {
 		if ("hashCode".equals(method.getName())) {
 			return hashCode();
 		} else if ("equals".equals(method.getName())) {
@@ -156,13 +158,11 @@ public class AnnotationInstanceProvider implements Annotation, InvocationHandler
 			return annotationType();
 		} else if ("toString".equals(method.getName())) {
 			return toString();
+		} else if (memberValues.containsKey(method.getName())) {
+			return memberValues.get(method.getName());
 		} else {
-			if (memberValues.containsKey(method.getName())) {
-				return memberValues.get(method.getName());
-			} else {
-				// Default cause, probably won't ever happen, unless annotations get actual methods
-				return method.getDefaultValue();
-			}
+			// Default cause, probably won't ever happen, unless annotations get actual methods
+			return method.getDefaultValue();
 		}
 	}
 
@@ -181,10 +181,10 @@ public class AnnotationInstanceProvider implements Annotation, InvocationHandler
 	 */
 	@Override
 	public String toString() {
-		Method[] methods = annotationClass.getDeclaredMethods();
+		final Method[] methods = annotationClass.getDeclaredMethods();
 
-		StringBuilder sb = new StringBuilder("@" + annotationType().getName() + "(");
-		int length = methods.length;
+		final StringBuilder sb = new StringBuilder("@" + annotationType().getName() + "(");
+		final int length = methods.length;
 
 		for (int i = 0; i < length; i++) {
 			// Member name
@@ -194,7 +194,7 @@ public class AnnotationInstanceProvider implements Annotation, InvocationHandler
 			Object memberValue;
 			try {
 				memberValue = invoke(this, methods[i], EMPTY_OBJECT_ARRAY);
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				memberValue = "";
 			}
 			sb.append(memberValue);
@@ -210,15 +210,15 @@ public class AnnotationInstanceProvider implements Annotation, InvocationHandler
 	}
 
 	@Override
-	public boolean equals(Object o) {
+	public boolean equals(final Object o) {
 		if (this == o) {
 			return true;
 		}
-		if (!(o instanceof AnnotationInstanceProvider)) {
+		if (!(o instanceof final AnnotationInstanceProvider that)) {
 			if (annotationClass.isInstance(o)) {
-				for (Map.Entry<String, ?> entry : memberValues.entrySet()) {
+				for (final Map.Entry<String, ?> entry : memberValues.entrySet()) {
 					try {
-						Object oValue = annotationClass.getMethod(entry.getKey(), EMPTY_CLASS_ARRAY).invoke(o, EMPTY_OBJECT_ARRAY);
+						final Object oValue = annotationClass.getMethod(entry.getKey(), EMPTY_CLASS_ARRAY).invoke(o, EMPTY_OBJECT_ARRAY);
 						if (oValue != null && entry.getValue() != null) {
 							if (!oValue.equals(entry.getValue())) {
 								return false;
@@ -227,11 +227,7 @@ public class AnnotationInstanceProvider implements Annotation, InvocationHandler
 							// This may not actually ever happen, unless null is a default for a member
 							return false;
 						}
-					} catch (IllegalAccessException e) {
-						throw new RuntimeException(e);
-					} catch (InvocationTargetException e) {
-						throw new RuntimeException(e);
-					} catch (NoSuchMethodException e) {
+					} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
 						throw new RuntimeException(e);
 					}
 				}
@@ -239,8 +235,6 @@ public class AnnotationInstanceProvider implements Annotation, InvocationHandler
 			}
 			return false;
 		}
-
-		AnnotationInstanceProvider that = (AnnotationInstanceProvider) o;
 
 		if (!annotationClass.equals(that.annotationClass)) {
 			return false;
@@ -254,17 +248,17 @@ public class AnnotationInstanceProvider implements Annotation, InvocationHandler
 	@Override
 	public int hashCode() {
 		int result = 0;
-		Class<? extends Annotation> type = annotationClass;
-		for (Method m : type.getDeclaredMethods()) {
+		final Class<? extends Annotation> type = annotationClass;
+		for (final Method m : type.getDeclaredMethods()) {
 			try {
-				Object value = invoke(this, m, EMPTY_OBJECT_ARRAY);
+				final Object value = invoke(this, m, EMPTY_OBJECT_ARRAY);
 				if (value == null) {
 					throw new IllegalStateException(String.format("Annotation method %s returned null", m));
 				}
 				result += hashMember(m.getName(), value);
-			} catch (RuntimeException ex) {
+			} catch (final RuntimeException ex) {
 				throw ex;
-			} catch (Exception ex) {
+			} catch (final Exception ex) {
 				throw new RuntimeException(ex);
 			}
 		}
@@ -284,19 +278,19 @@ public class AnnotationInstanceProvider implements Annotation, InvocationHandler
 	 * @throws IllegalStateException
 	 *           if an annotation method invocation returns {@code null}
 	 */
-	private int hashCode(Annotation a) {
+	private int hashCode(final Annotation a) {
 		int result = 0;
-		Class<? extends Annotation> type = a.annotationType();
-		for (Method m : type.getDeclaredMethods()) {
+		final Class<? extends Annotation> type = a.annotationType();
+		for (final Method m : type.getDeclaredMethods()) {
 			try {
-				Object value = m.invoke(a);
+				final Object value = m.invoke(a);
 				if (value == null) {
 					throw new IllegalStateException(String.format("Annotation method %s returned null", m));
 				}
 				result += hashMember(m.getName(), value);
-			} catch (RuntimeException ex) {
+			} catch (final RuntimeException ex) {
 				throw ex;
-			} catch (Exception ex) {
+			} catch (final Exception ex) {
 				throw new RuntimeException(ex);
 			}
 		}
@@ -312,8 +306,8 @@ public class AnnotationInstanceProvider implements Annotation, InvocationHandler
 	 *          the value of the member
 	 * @return a hash code for this member
 	 */
-	private int hashMember(String name, Object value) {
-		int part1 = name.hashCode() * 127;
+	private int hashMember(final String name, final Object value) {
+		final int part1 = name.hashCode() * 127;
 		if (value.getClass().isArray()) {
 			return part1 ^ arrayMemberHash(value.getClass().getComponentType(), value);
 		}

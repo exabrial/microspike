@@ -28,7 +28,7 @@ class AnnotationStore {
 	private final Map<Class<? extends Annotation>, Annotation> annotationMap;
 	private final Set<Annotation> annotationSet;
 
-	AnnotationStore(Map<Class<? extends Annotation>, Annotation> annotationMap, Set<Annotation> annotationSet) {
+	AnnotationStore(final Map<Class<? extends Annotation>, Annotation> annotationMap, final Set<Annotation> annotationSet) {
 		this.annotationMap = annotationMap;
 		this.annotationSet = unmodifiableSet(annotationSet);
 	}
@@ -38,7 +38,7 @@ class AnnotationStore {
 		annotationSet = emptySet();
 	}
 
-	<T extends Annotation> T getAnnotation(Class<T> annotationType) {
+	<T extends Annotation> T getAnnotation(final Class<T> annotationType) {
 		return annotationType.cast(annotationMap.get(annotationType));
 	}
 
@@ -46,7 +46,7 @@ class AnnotationStore {
 		return annotationSet;
 	}
 
-	boolean isAnnotationPresent(Class<? extends Annotation> annotationType) {
+	boolean isAnnotationPresent(final Class<? extends Annotation> annotationType) {
 		return annotationMap.containsKey(annotationType);
 	}
 }

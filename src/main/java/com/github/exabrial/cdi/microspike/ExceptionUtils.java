@@ -23,39 +23,39 @@ public abstract class ExceptionUtils {
 		// prevent instantiation
 	}
 
-	public static RuntimeException throwAsRuntimeException(Throwable throwable) {
+	public static RuntimeException throwAsRuntimeException(final Throwable throwable) {
 		// Attention: helper which allows to use a trick to throw a catched checked exception without a wrapping exception
 		new ExceptionHelper<RuntimeException>().throwException(throwable);
 		return null; // not needed due to the helper trick, but it's easier for using it
 	}
 
-	public static void changeAndThrowException(Throwable throwable, String customMessage) {
-		Throwable newThrowable = createNewException(throwable, customMessage);
+	public static void changeAndThrowException(final Throwable throwable, final String customMessage) {
+		final Throwable newThrowable = createNewException(throwable, customMessage);
 		// Attention: helper which allows to use a trick to throw a cached checked exception without a wrapping exception
 		new ExceptionHelper<RuntimeException>().throwException(newThrowable);
 	}
 
-	private static Throwable createNewException(Throwable throwable, String message) {
-		Class<? extends Throwable> throwableClass = throwable.getClass();
+	private static Throwable createNewException(final Throwable throwable, final String message) {
+		final Class<? extends Throwable> throwableClass = throwable.getClass();
 
 		try {
-			Constructor<? extends Throwable> constructor = throwableClass.getDeclaredConstructor(String.class);
+			final Constructor<? extends Throwable> constructor = throwableClass.getDeclaredConstructor(String.class);
 			constructor.setAccessible(true);
-			Throwable result = constructor.newInstance(message);
+			final Throwable result = constructor.newInstance(message);
 			result.initCause(throwable.getCause());
 			return result;
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			return new Exception(e);
 		}
 	}
 
 	@SuppressWarnings({ "unchecked" })
 	private static class ExceptionHelper<T extends Throwable> {
-		private void throwException(Throwable exception) throws T {
+		private void throwException(final Throwable exception) throws T {
 			try {
 				// exception-type is only checked at compile-time
 				throw (T) exception;
-			} catch (ClassCastException e) {
+			} catch (final ClassCastException e) {
 				// doesn't happen with existing JVMs! - if that changes the local ClassCastException needs to be ignored -> throw original
 				// exception
 				if (e.getStackTrace()[0].toString().contains(getClass().getName())) {

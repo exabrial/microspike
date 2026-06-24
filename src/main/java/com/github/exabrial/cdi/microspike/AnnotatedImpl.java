@@ -30,7 +30,7 @@ abstract class AnnotatedImpl implements Annotated {
 	private final Set<Type> typeClosure;
 	private final AnnotationStore annotations;
 
-	protected AnnotatedImpl(Class<?> type, AnnotationStore annotations, Type genericType, Type overriddenType) {
+	protected AnnotatedImpl(final Class<?> type, final AnnotationStore annotations, final Type genericType, final Type overriddenType) {
 		if (overriddenType == null) {
 			if (genericType != null) {
 				typeClosure = new HierarchyDiscovery(genericType).getTypeClosure();
@@ -55,7 +55,7 @@ abstract class AnnotatedImpl implements Annotated {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public <T extends Annotation> T getAnnotation(Class<T> annotationType) {
+	public <T extends Annotation> T getAnnotation(final Class<T> annotationType) {
 		return annotations.getAnnotation(annotationType);
 	}
 
@@ -71,7 +71,7 @@ abstract class AnnotatedImpl implements Annotated {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public boolean isAnnotationPresent(Class<? extends Annotation> annotationType) {
+	public boolean isAnnotationPresent(final Class<? extends Annotation> annotationType) {
 		return annotations.isAnnotationPresent(annotationType);
 	}
 
@@ -80,7 +80,7 @@ abstract class AnnotatedImpl implements Annotated {
 	 */
 	@Override
 	public Set<Type> getTypeClosure() {
-		return new HashSet<Type>(typeClosure);
+		return new HashSet<>(typeClosure);
 	}
 
 	/**

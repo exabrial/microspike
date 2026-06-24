@@ -24,19 +24,20 @@ import jakarta.enterprise.inject.spi.AnnotatedConstructor;
  * <p>
  * and other CDI life cycle events.
  */
+@SuppressWarnings("unchecked")
 class AnnotatedConstructorImpl<X> extends AnnotatedCallableImpl<X, Constructor<X>> implements AnnotatedConstructor<X> {
 
 	/**
 	 * Constructor.
 	 */
-	AnnotatedConstructorImpl(AnnotatedTypeImpl<X> type, Constructor<?> constructor, AnnotationStore annotations,
-			Map<Integer, AnnotationStore> parameterAnnotations, Map<Integer, Type> typeOverrides) {
+	AnnotatedConstructorImpl(final AnnotatedTypeImpl<X> type, final Constructor<?> constructor, final AnnotationStore annotations,
+			final Map<Integer, AnnotationStore> parameterAnnotations, final Map<Integer, Type> typeOverrides) {
 
 		super(type, (Constructor<X>) constructor, constructor.getDeclaringClass(), constructor.getParameterTypes(),
 				getGenericArray(constructor), annotations, parameterAnnotations, null, typeOverrides);
 	}
 
-	private static Type[] getGenericArray(Constructor<?> constructor) {
+	private static Type[] getGenericArray(final Constructor<?> constructor) {
 		Type[] genericTypes = constructor.getGenericParameterTypes();
 		// for inner classes genericTypes and parameterTypes can be different length, this is a hack to fix this. TODO: investigate this
 		// behavior further, on different JVM's and compilers

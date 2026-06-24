@@ -31,21 +31,22 @@ abstract class AnnotatedCallableImpl<X, Y extends Member> extends AnnotatedMembe
 
 	private final List<AnnotatedParameter<X>> parameters;
 
-	protected AnnotatedCallableImpl(AnnotatedType<X> declaringType, Y member, Class<?> memberType, Class<?>[] parameterTypes,
-			Type[] genericTypes, AnnotationStore annotations, Map<Integer, AnnotationStore> parameterAnnotations, Type genericType,
-			Map<Integer, Type> parameterTypeOverrides) {
+	protected AnnotatedCallableImpl(final AnnotatedType<X> declaringType, final Y member, final Class<?> memberType,
+			final Class<?>[] parameterTypes, final Type[] genericTypes, final AnnotationStore annotations,
+			final Map<Integer, AnnotationStore> parameterAnnotations, final Type genericType,
+			final Map<Integer, Type> parameterTypeOverrides) {
 		super(declaringType, member, memberType, annotations, genericType, null);
 		parameters = getAnnotatedParameters(this, parameterTypes, genericTypes, parameterAnnotations, parameterTypeOverrides);
 	}
 
-	private static <X, Y extends Member> List<AnnotatedParameter<X>> getAnnotatedParameters(AnnotatedCallableImpl<X, Y> callable,
-			Class<?>[] parameterTypes, Type[] genericTypes, Map<Integer, AnnotationStore> parameterAnnotations,
-			Map<Integer, Type> parameterTypeOverrides) {
-		List<AnnotatedParameter<X>> parameters = new ArrayList<AnnotatedParameter<X>>();
-		int len = parameterTypes.length;
+	private static <X, Y extends Member> List<AnnotatedParameter<X>> getAnnotatedParameters(final AnnotatedCallableImpl<X, Y> callable,
+			final Class<?>[] parameterTypes, final Type[] genericTypes, final Map<Integer, AnnotationStore> parameterAnnotations,
+			final Map<Integer, Type> parameterTypeOverrides) {
+		final List<AnnotatedParameter<X>> parameters = new ArrayList<>();
+		final int len = parameterTypes.length;
 
 		for (int i = 0; i < len; ++i) {
-			AnnotationBuilder builder = new AnnotationBuilder();
+			final AnnotationBuilder builder = new AnnotationBuilder();
 			if (parameterAnnotations != null && parameterAnnotations.containsKey(i)) {
 				builder.addAll(parameterAnnotations.get(i));
 			}
@@ -53,8 +54,8 @@ abstract class AnnotatedCallableImpl<X, Y extends Member> extends AnnotatedMembe
 			if (parameterTypeOverrides != null) {
 				over = parameterTypeOverrides.get(i);
 			}
-			AnnotatedParameterImpl<X> p = new AnnotatedParameterImpl<X>(callable, parameterTypes[i], i, builder.create(), genericTypes[i],
-					over);
+			final AnnotatedParameterImpl<X> p = new AnnotatedParameterImpl<>(callable, parameterTypes[i], i, builder.create(),
+					genericTypes[i], over);
 
 			parameters.add(p);
 		}
@@ -69,7 +70,7 @@ abstract class AnnotatedCallableImpl<X, Y extends Member> extends AnnotatedMembe
 		return Collections.unmodifiableList(parameters);
 	}
 
-	public AnnotatedParameter<X> getParameter(int index) {
+	public AnnotatedParameter<X> getParameter(final int index) {
 		return parameters.get(index);
 
 	}

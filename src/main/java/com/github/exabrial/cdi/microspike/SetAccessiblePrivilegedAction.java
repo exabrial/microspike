@@ -26,10 +26,11 @@ import jakarta.enterprise.inject.Typed;
 public class SetAccessiblePrivilegedAction implements PrivilegedAction<Void> {
 	private final AccessibleObject member;
 
-	public SetAccessiblePrivilegedAction(AccessibleObject member) {
+	public SetAccessiblePrivilegedAction(final AccessibleObject member) {
 		this.member = member;
 	}
 
+	@Override
 	public Void run() {
 		member.setAccessible(true);
 		return null;
